@@ -42,6 +42,12 @@ public class RiverConfig {
     private static final String ACTION_TYPE = "action.type";
     private static final String FLUSH_INTERVAL_IN_SECONDS = "flush.interval";
 
+    /* StatsD config */
+    private static final String STATSD_PREFIX = "prefix";
+    private static final String STATSD_HOST = "host";
+    private static final String STATSD_PORT = "port";
+    private static final String STATSD_INTERVAL_IN_SECONDS = "log.interval";
+
 
     private String zookeeperConnect;
     private int zookeeperConnectionTimeout;
@@ -53,6 +59,11 @@ public class RiverConfig {
     private int concurrentRequests;
     private ActionType actionType;
     private int flushIntervalInSeconds;
+    
+    private String statsdPrefix;
+    private String statsdHost;
+    private int statsdPort;
+    private int statsdIntervalInSeconds;
 
 
     public RiverConfig(RiverName riverName, RiverSettings riverSettings) {
@@ -91,6 +102,15 @@ public class RiverConfig {
             concurrentRequests = 1;
             actionType = ActionType.INDEX;
             flushIntervalInSeconds = 12 * 60 * 1000;
+        }
+        
+        // Extract Statsd related configuration
+        if (riverSettings.settings().containsKey("statsd")) {
+            Map<String, Object> statsdSettings = (Map<String, Object>) riverSettings.settings().get("statsd");
+            statsdHost = XContentMapValues.nodeStringValue(statsdSettings.get(STATSD_HOST), "localhost");
+            statsdPrefix = XContentMapValues.nodeStringValue(statsdSettings.get(STATSD_PREFIX), "kafka_river");
+            statsdPort = XContentMapValues.nodeIntegerValue(statsdSettings.get(STATSD_PORT), 8125);
+            statsdIntervalInSeconds = XContentMapValues.nodeIntegerValue(statsdSettings.get(STATSD_INTERVAL_IN_SECONDS), 10);
         }
     }
 
@@ -185,4 +205,20 @@ public class RiverConfig {
     }
 
     int getFlushIntervalInSeconds() { return flushIntervalInSeconds; }
+
+    String getStatsdHost() {
+        return statsdHost;
+    }
+
+    String getStatsdPrefix() {
+        return statsdPrefix;
+    }
+
+    int getStatsdPort() {
+        return statsdPort;
+    }
+    
+    int getStatsdIntervalInSeconds() {
+        return statsdIntervalInSeconds;
+    }
 }
