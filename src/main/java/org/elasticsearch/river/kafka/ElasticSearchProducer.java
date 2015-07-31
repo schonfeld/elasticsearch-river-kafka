@@ -29,7 +29,6 @@ import org.elasticsearch.common.logging.ESLoggerFactory;
 import org.elasticsearch.common.unit.TimeValue;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An ElasticSearch base producer, which creates an index, mapping in the EL.
